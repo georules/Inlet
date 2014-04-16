@@ -913,6 +913,7 @@ Inlet = function() {
                 line: r.line,
                 ch: o.end
             };
+            n.dragging = true;
             n.replaceRange(t, s, a);
         }
         function v(e) {
@@ -927,6 +928,7 @@ Inlet = function() {
             i.setAttribute("min", s.min);
             i.setAttribute("max", s.max);
             i.value = o;
+            n.dragging = false;
         }
         var m = 37;
         var g = 38;
@@ -970,7 +972,11 @@ Inlet = function() {
                 line: r.line,
                 ch: i.end
             };
+            n.picking = true;
             n.replaceRange(e, o, s);
+            setTimeout(function() {
+                n.picking = false;
+            }, 100);
         };
         o = new thistle.Picker("#ffffff");
         function M(e) {
