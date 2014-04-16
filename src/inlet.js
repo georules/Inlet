@@ -1,5 +1,6 @@
 Inlet = (function() {
   function inlet(ed, options) {
+
     var editor = ed;
     var slider;
     var picker;
@@ -23,7 +24,7 @@ Inlet = (function() {
 
     //make the slider
     var sliderDiv = document.createElement("div");
-    sliderDiv.className = "inlet_slider";
+    sliderDiv.className = "inlet_slider scrub";
     //some styles are necessary for behavior
     sliderDiv.style.visibility = "hidden";
     sliderDiv.style.position = "absolute";
@@ -32,38 +33,99 @@ Inlet = (function() {
     //TODO: figure out how to capture key events when slider has focus
     //sliderDiv.addEventListener("keydown", onKeyDown);
 
-    var slider = document.createElement("input");
+    /*var slider = document.createElement("input");
     slider.className = "range";
-    slider.setAttribute("type", "range");
-    slider.addEventListener("change", onSlide);
-    slider.addEventListener("mouseup", onSlideMouseUp);
+    slider.setAttribute("type", "range");*/
+    //sliderDiv.addEventListener("mousedown", onSlide);
+    
     //slider.style.width = "inherit";
-    sliderDiv.appendChild(slider);
+    //sliderDiv.appendChild(slider);
+    
+    deltaForNumber = function(n) {
+    var firstSig, lastDigit, s, specificity;
+    if (n === 0) {
+      return 1;
+    }
+    if (n === 1) {
+      return 0.1;
+    }
+    lastDigit = function(n) {
+      return Math.round((n / 10 - Math.floor(n / 10)) * 10);
+    };
+    firstSig = function(n) {
+      var i;
+      n = Math.abs(n);
+      i = 0;
+      while (lastDigit(n) === 0) {
+        i++;
+        n /= 10;
+      }
+      return i;
+    };
+    specificity = function(n) {
+      var abs, fraction, s;
+      s = 0;
+      while (true) {
+        abs = Math.abs(n);
+        fraction = abs - Math.floor(abs);
+        if (fraction < 0.000001) {
+          return s;
+        }
+        s++;
+        n = n * 10;
+      }
+    };
+    s = specificity(n);
+    if (s > 0) {
+      return Math.pow(10, -s);
+    } else {
+      n = Math.abs(n);
+      return Math.pow(10, Math.max(0, firstSig(n) - 1));
+    }
+  };
+
 
 
     function onSlide(event) {
-      var value = String(slider.value);
+      event.preventDefault();
+      mx = event.pageX;
+      
       var cursor = editor.getCursor(true);
       var number = getMatch(cursor,'number');
       if(!number) return;
-      var start = {"line":cursor.line, "ch":number.start};
-      var end = {"line":cursor.line, "ch":number.end};
-      editor.replaceRange(value, start, end);
+        
+      var numValue = Number(number.string).valueOf();
+      console.log(numValue);
+      delta = deltaForNumber(numValue);
+      console.log(delta);
+           
+      onSlideMouseUp = function(event) {
+          window.removeEventListener("mousemove",moved);
+          sliderDiv.style.visibility = "hidden";
+      };
+        
+      moved = function(event) {
+          event.preventDefault();
+          var cursor = editor.getCursor(true);
+          var number = getMatch(cursor,'number');
+          if(!number) {
+              onSlideMouseUp();
+              return;
+          }
+          var d = Number((Math.round((event.pageX - mx) / 2) * delta + numValue).toFixed(5));
+          var start = {"line":cursor.line, "ch":number.start};
+          var end = {"line":cursor.line, "ch":number.end};
+          console.log(d)
+          editor.replaceRange(String(d), start, end);
+      };
+        
+      window.addEventListener("mouseup", onSlideMouseUp);
+      window.addEventListener('mousemove', moved);
+        
+
     }
 
-    function onSlideMouseUp(event) {
-      slider.value = 0;
-      var cursor = editor.getCursor(true);
-      var number = getMatch(cursor,'number');
-      if(!number) return;
-      var value = parseFloat(number.string);
-      var sliderRange = getSliderRange(value);
-      slider.setAttribute("value", value);
-      slider.setAttribute("step", sliderRange.step);
-      slider.setAttribute("min", sliderRange.min);
-      slider.setAttribute("max", sliderRange.max);
-      slider.value = value;
-    }
+    
 
     var LEFT = 37;
     var UP = 38;
@@ -169,25 +231,23 @@ Inlet = (function() {
           pickerCallback(picked,'rgb')
         })
       } else if(numberMatch) {
-        slider.value = 0;
-        var value = parseFloat(numberMatch.string);
-        var sliderRange = getSliderRange(value);
-        slider.setAttribute("value", value);
-        slider.setAttribute("step", sliderRange.step);
-        slider.setAttribute("min", sliderRange.min);
-        slider.setAttribute("max", sliderRange.max);
-        slider.value = value;
+
+        var len = numberMatch.string.length;
 
         //setup slider position
         // position slider centered above the cursor
         var sliderTop = cursorOffset.top - y_offset;
-        var sliderStyle = window.getComputedStyle(sliderDiv);
-        var sliderWidth = getPixels(sliderStyle.width);
-        var sliderLeft = cursorOffset.left - sliderWidth/2;
-        sliderDiv.style.top = sliderTop - 10 + "px";
-        sliderDiv.style.left = sliderLeft + "px";
 
+        var sliderWidth = (len*16);
+          
+        var sliderLeft = cursorOffset.left - sliderWidth/2;
+        sliderDiv.style.top = sliderTop + 10 + "px";
+        sliderDiv.style.left = sliderLeft + "px";
+        sliderDiv.style.width = sliderWidth + "px";
+        ev.preventDefault();
         sliderDiv.style.visibility = "visible";
+        onSlide(ev);
+          
       } else {
 
       }
