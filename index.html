@@ -4,12 +4,28 @@
     <meta charset='utf-8' />
     <title>Inlet.js</title>
 
-    <link rel="stylesheet" href="lib/CodeMirror3/lib/codemirror.css">
-    <link rel="stylesheet" href="lib/CodeMirror3/theme/monokai.css">
+    <link rel="stylesheet" href="lib/CodeMirror/lib/codemirror.css">
+    <link rel="stylesheet" href="lib/CodeMirror/theme/monokai.css">
 
     <link rel="stylesheet" href="inlet.css" type="text/css" media="screen"  title="no title" charset="utf-8">
 
     <link rel="stylesheet" href="lib/index.css" type="text/css" media="screen"  title="no title" charset="utf-8">
+
+    <style type="text/css">
+        .cm-palette {
+            text-decoration: underline;
+        }
+        .CodeMirror .cm-palette-hint {
+            display: inline-block;
+            box-sizing: border-box;
+            margin: 0 2px;
+            border-radius: 50%;
+            vertical-align: middle;
+            width: 10px;
+            height: 10px;
+            box-shadow: 0 0 2px;
+        }
+        </style>
 
     <link href='http://fonts.googleapis.com/css?family=Alegreya:900italic' rel='stylesheet' type='text/css'>
 
@@ -35,25 +51,28 @@
 
     <strong><a href="https://github.com/enjalot/Inlet">check out the code</a></strong><br><br>
     by <strong><a href="http://twitter.com/enjalot">@enjalot</a></strong> and <strong><a href="http://twitter.com/mrejfox">@mrejfox</a></strong>
-    
+
     <span id="example">42 === The answer to life, the universe and everything.</div>
   </div>
-  
+
   <div id='editor'>
   </div>
 
-  <script src="lib/CodeMirror3/lib/codemirror.js"></script>
-  <script src="lib/CodeMirror3/mode/javascript/javascript.js"></script>
+  <script src="lib/CodeMirror/lib/codemirror.js"></script>
+  <script src="lib/CodeMirror/mode/javascript/javascript.js"></script>
+  <script src="lib/CodeMirror/addon/display/palette.js"></script>
 
   <script src="inlet.js"></script>
 
   <script>
     var editor = CodeMirror(document.getElementById("editor"),{
       //default code for example:
-      value: '//Click on the hex value or number below:\n\nvar color = "#D1FFDB"\n\nvar theAnswer = 42;\n\n//Usage looks like:\n//var editor = CodeMirror(...);\n//Inlet(editor);\n\n//You can also use hsl colors, try replacing #D1FFDB with hsl(133,100%,91%)',
+      value: '//Click on the hex value or number below:\n\nvar color = " #D1FFDB "\n\nvar theAnswer = 42;\n\n//Usage looks like:\n//var editor = CodeMirror(...);\n//Inlet(editor);\n\n//You can also use hsl colors, try replacing #D1FFDB with hsl(133,100%,91%)',
       mode:  "javascript",
       theme: "monokai",
       lineNumbers: true,
+      paletteHints: true
+
     });
     editor.on("change", changeFunction)
     function changeFunction() {
@@ -69,7 +88,6 @@
 
     var inlet = Inlet(editor);
   </script>
-    
+
     <!--<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>-->
 </body>
-
