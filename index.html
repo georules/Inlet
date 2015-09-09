@@ -35,10 +35,10 @@
 
     <strong><a href="https://github.com/enjalot/Inlet">check out the code</a></strong><br><br>
     by <strong><a href="http://twitter.com/enjalot">@enjalot</a></strong> and <strong><a href="http://twitter.com/mrejfox">@mrejfox</a></strong>
-    
+
     <span id="example">42 === The answer to life, the universe and everything.</div>
   </div>
-  
+
   <div id='editor'>
   </div>
 
@@ -53,7 +53,7 @@
       value: '//Click on the hex value or number below:\n\nvar color = "#D1FFDB"\n\nvar theAnswer = 42;\n\n//Usage looks like:\n//var editor = CodeMirror(...);\n//Inlet(editor);\n\n//You can also use hsl colors, try replacing #D1FFDB with hsl(133,100%,91%)',
       mode:  "javascript",
       theme: "monokai",
-      lineNumbers: true,
+      lineNumbers: true
     });
     editor.on("change", changeFunction)
     function changeFunction() {
@@ -69,7 +69,6 @@
 
     var inlet = Inlet(editor);
   </script>
-    
+
     <!--<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>-->
 </body>
-

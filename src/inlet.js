@@ -4,6 +4,9 @@ Inlet = (function() {
     var slider;
     var picker;
 
+    var tempHistory = editor.getHistory();
+    var revertHistory = false;
+
     if(!options) options = {};
     if(!options.picker) options.picker = {};
     if(!options.slider) options.slider = {};
@@ -35,7 +38,7 @@ Inlet = (function() {
     sliderDiv.className = "inlet_slider";
     //some styles are necessary for behavior
     sliderDiv.style.visibility = "hidden";
-    if(sliderWidth) { 
+    if(sliderWidth) {
       sliderDiv.style.width = sliderWidth;
     }
     if(fixedContainer) {
@@ -167,12 +170,15 @@ Inlet = (function() {
       if (cursorOffset.top < topBoundary) {pickerTop = (cursorOffset.top + bottomOffset)}
 
       var pickerLeft = leftBase - leftOffset;
-      
+
       sliderDiv.style.visibility = "hidden";
 
       if(hexMatch) {
+        tempHistory = editor.getHistory()
+        revertHistory = true
+        console.log("hex")
         var color = hexMatch.string;
-        // reconstructing the picker so that the previous color 
+        // reconstructing the picker so that the previous color
         // element shows the color clicked
         picker = new thistle.Picker(color)
         picker.setCSS(color) // current color selection
@@ -232,15 +238,19 @@ Inlet = (function() {
 
         sliderDiv.style.visibility = "visible";
       } else {
-
+        if(revertHistory) {
+          editor.setHistory(tempHistory)
+          revertHistory = false
+          console.log("reverted")
+        }
       }
     }
-    
+
     function getSliderRange(value) {
       //this could be substituted out for other heuristics
       var range, step, sliderMin, sliderMax;
       //these values were chosen by Gabriel Florit for his livecoding project, they work really well!
-      if (value === 0) { 
+      if (value === 0) {
         range = [-100, 100];
       } else {
         range = [-value * 3, value * 5];
@@ -264,7 +274,7 @@ Inlet = (function() {
         step: step
       }
     }
-    
+
     function getMatch(cursor, type) {
       if (!type) return;
       var re;
@@ -310,7 +320,7 @@ Inlet = (function() {
     }
 
   }
-    
+
   function getPixels(style) {
     var pix = 0;
     if(style.length > 2 ) {
@@ -318,7 +328,7 @@ Inlet = (function() {
     }
     if(!pix) pix = 0;
     return pix;
-  } 
+  }
   function getOffset( el ) {
     var _x = 0;
     var _y = 0;
@@ -329,8 +339,8 @@ Inlet = (function() {
     }
     return { top: _y, left: _x };
 }
-  
-  
+
+
 
   return inlet;
 
